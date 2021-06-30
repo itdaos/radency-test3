@@ -5,14 +5,37 @@ const controller = new NotesController();
 
 /* GET home page. */
 router.get("/", function (req, res, next) {
-  const data = controller.getAllNotes();
-  res.send(data);
+  const notes = controller.getAllNotes();
+  res.send(notes);
 });
 
-router.get("/:noteId", function (req, res, nex) {
+router.get("/stats", function (req, res, next) {
+  const summary = controller.getSummary();
+  res.send(summary);
+});
+
+router.post("/", function (req, res, nex) {
+  const note = { ...req.body };
+  const resp = controller.createNote(note);
+  res.send(resp);
+});
+
+router.get("/:noteId", function (req, res, next) {
   const { noteId } = req.params;
-  const data = controller.getNoteById(noteId);
-  res.send(data);
+  const note = controller.getNoteById(noteId);
+  res.send(note);
+});
+
+router.patch("/:noteId", function (req, res, next) {
+  const { noteId } = req.params;
+  const resp = controller.editNoteById(noteId, req.body);
+  res.send(resp);
+});
+
+router.delete("/:noteId", function (req, res, next) {
+  const { noteId } = req.params;
+  const resp = controller.deleteNoteById(noteId);
+  res.send(resp);
 });
 
 module.exports = router;

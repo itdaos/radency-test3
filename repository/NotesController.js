@@ -1,6 +1,5 @@
 class NotesController {
   constructor(db) {
-    console.log("Initialized Controller");
     if (!db) {
       const { DBEmulator } = require("../mock/db");
       db = DBEmulator.getInstance();
@@ -14,6 +13,22 @@ class NotesController {
 
   getNoteById(id) {
     return this.db.getNoteById(id);
+  }
+
+  getSummary() {
+    return this.db.getSummary();
+  }
+
+  deleteNoteById(id) {
+    return this.db.deleteNoteById(id);
+  }
+
+  editNoteById(id, payload) {
+    return this.db.editNoteById(id, payload);
+  }
+
+  createNote(payload) {
+    return this.db.createNote(payload);
   }
 }
 

@@ -4,7 +4,6 @@ const { CATEGORY } = require("./scheme");
 
 class DBMock {
   constructor(notes) {
-    console.log("created Successfully");
     this.notes = [];
     notes.forEach((element) => {
       this.createNote(element);
@@ -12,7 +11,7 @@ class DBMock {
   }
 
   getAllNotes() {
-    return this.notes.filter((note) => !note.isArchived);
+    return this.notes;
   }
 
   getNoteById(id) {
@@ -25,22 +24,40 @@ class DBMock {
   }
 
   createNote(note) {
-    note.id = createUUID(); // not good, very bad
+    note.id = createUUID(); // not as good as can be, TODO: change it when DB is on
     note.isArchived = note.isArchived || false;
     this.notes.push(note);
     return note;
   }
 
   editNoteById(id, note) {
-    let elem = this.notes.find((note) => note.id === id);
-    elem = { ...elem, ...note };
+    const elem = this.notes.find((note) => note.id === id);
+    elem.name = note.name || elem.name;
+    elem.category = note.category || elem.category;
+    elem.isArchived =
+      note.isArchived === undefined ? elem.isArchived : note.isArchived;
+    elem.content = note.content || elem.content;
+    elem.dates = note.dates || elem.dates;
     return elem;
   }
 
   getSummary() {
     const summary = {};
-
-    return;
+    CATEGORY.forEach((category) => {
+      const categoryStat = { active: 0, archive: 0 };
+      this.notes
+        .filter((note) => note.category === category)
+        .reduce((prev, curr) => {
+          if (curr.isArchived) {
+            prev.archive += 1;
+          } else {
+            prev.active += 1;
+          }
+          return prev;
+        }, categoryStat);
+      summary[category] = { ...categoryStat };
+    });
+    return summary;
   }
 }
 
