@@ -15,6 +15,7 @@ class DBMock {
   }
 
   getNoteById(id) {
+    console.log(id, this.notes);
     return this.notes.find((note) => note.id === id);
   }
 
@@ -26,6 +27,12 @@ class DBMock {
   createNote(note) {
     note.id = createUUID(); // not as good as can be, TODO: change it when DB is on
     note.isArchived = note.isArchived || false;
+    if (note.createdAt instanceof Date) {
+      note.createdAt = note.createdAt || Date.now();
+    } else {
+      note.createdAt = new Date(note.createdAt).getTime() || Date.now();
+    }
+
     this.notes.push(note);
     return note;
   }

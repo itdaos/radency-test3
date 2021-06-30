@@ -1,40 +1,36 @@
 var express = require("express");
 var router = express.Router();
-var NotesController = require("../repository/NotesController");
-const controller = new NotesController();
+var NotesService = require("../services/NotesService");
+const service = new NotesService();
 
 /* GET home page. */
 router.get("/", function (req, res, next) {
-  const notes = controller.getAllNotes();
-  res.send(notes);
+  const resp = service.tryGetAll();
+  res.send(resp);
 });
 
 router.get("/stats", function (req, res, next) {
-  const summary = controller.getSummary();
-  res.send(summary);
+  const resp = service.tryGetSummary();
+  res.send(resp);
 });
 
 router.post("/", function (req, res, nex) {
-  const note = { ...req.body };
-  const resp = controller.createNote(note);
+  const resp = service.tryCreate(req.body);
   res.send(resp);
 });
 
-router.get("/:noteId", function (req, res, next) {
-  const { noteId } = req.params;
-  const note = controller.getNoteById(noteId);
-  res.send(note);
+router.get("/:id", function (req, res, next) {
+  const resp = service.tryGetById(req.params);
+  res.status(resp.status || 200).send(resp);
 });
 
-router.patch("/:noteId", function (req, res, next) {
-  const { noteId } = req.params;
-  const resp = controller.editNoteById(noteId, req.body);
+router.patch("/:id", function (req, res, next) {
+  const resp = service.tryUpdate({ ...req.params, ...req.body });
   res.send(resp);
 });
 
-router.delete("/:noteId", function (req, res, next) {
-  const { noteId } = req.params;
-  const resp = controller.deleteNoteById(noteId);
+router.delete("/:id", function (req, res, next) {
+  const resp = service.tryDelete(req.params);
   res.send(resp);
 });
 
